@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-size: cover;
+            background-position: center;
+            transition: background-image 1s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .slideshow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background-size: cover;
+            background-position: center;
+            z-index: -1;
+        }
+
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            margin: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        .description {
+            padding: 40px 20px;
+            text-align: center;
+            width: 80%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .description h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #007bff;
+        }
+
+        .description ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .description li {
+            background: #e9ecef;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            padding: 15px;
+            color: #333;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .description li::before {
+            content: "•";
+            color: #007bff;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .help-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s, transform 0.2s;
+            z-index: 10;
+        }
+
+        .help-button:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+
+        .help-button:focus {
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="slideshow"></div>
+    
+    <div class="content">
+        <button onclick="goToAddResume()">Add Resume</button>
+    </div>
+
+    <div class="description">
+        <h2>AI-Based Resume Screening</h2>
+        <ul>
+            <li>Individuals can see how well their resume fits specific job descriptions.</li>
+            <li>It helps them tailor their resumes more effectively to pass ATS screenings.</li>
+            <li>Knowing their score boosts their confidence in their job applications.</li>
+            <li>Improves efficiency by automating repetitive tasks.</li>
+            <li>It makes the job search more efficient by increasing the chances of getting noticed by recruiters.</li>
+        </ul>
+    </div>
+
+    <button class="help-button" onclick="goToHelp()">Help and Support</button>
+
+    <script>
+        const images = [
+            'Resume-Screening-Best-Practices.jpeg',
+            'Resume-Screening.jpg',
+            'background3.jpeg'
+        ];
+        let currentIndex = 0;
+
+        function changeBackground() {
+            document.querySelector('.slideshow').style.backgroundImage = `url('/static/${images[currentIndex]}')`;
+            currentIndex = (currentIndex + 1) % images.length;
+        }
+
+        setInterval(changeBackground, 5000);
+
+        changeBackground();
+
+        function goToAddResume() {
+            window.location.href = '/add_resume'; // Ensure this matches your Flask route
+        }
+
+        function goToHelp() {
+            window.location.href = '/help_and_support'; // Ensure this matches your Flask route
+        }
+    </script>
+</body>
+</html>

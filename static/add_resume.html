@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Resume</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            width: 100%;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 120%;
+            height: 120%;
+            background: radial-gradient(circle, rgba(0, 123, 255, 0.1), rgba(0, 123, 255, 0.3));
+            transition: all 0.3s ease-in-out;
+            transform: rotate(-30deg);
+            z-index: -1;
+        }
+
+        .container:hover::before {
+            transform: rotate(0deg);
+            background: radial-gradient(circle, rgba(0, 123, 255, 0.1), rgba(0, 123, 255, 0.5));
+        }
+
+        h1 {
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+
+        input[type="file"], input[type="text"] {
+            display: block;
+            margin: 10px auto;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #dee2e6;
+            width: calc(100% - 22px);
+            box-sizing: border-box;
+        }
+
+        .upload-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            margin: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .upload-btn:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .upload-label {
+            display: inline-block;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .upload-label:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+
+        .back-button {
+            display: inline-block;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            transition: background-color 0.3s, transform 0.2s;
+            margin-top: 20px;
+        }
+
+        .back-button:hover {
+            background-color: #5a6268;
+            transform: scale(1.05);
+        }
+
+        .instructions {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .instructions h2 {
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+
+        .instructions ul {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 10px;
+        }
+
+        .warning {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        #score-display, #matched-skills, #unmatched-skills {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #007bff;
+        }
+
+        #chart-container {
+            width: 100%;
+            height: 300px;
+        }
+
+        .stars {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .star {
+            font-size: 30px;
+            color: #ccc;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .star.selected, .star:hover {
+            color: #ffcc00;
+        }
+
+        #rating-message {
+            margin-top: 10px;
+            font-size: 18px;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Add Your Resume</h1>
+        
+        <form id="resume-form" enctype="multipart/form-data">
+            <input type="text" id="job-title" name="job" placeholder="Enter the job title" />
+            <label for="resume-upload" class="upload-label">Choose File</label>
+            <input type="file" id="resume-upload" name="resume" accept=".pdf,.jpg,.jpeg" />
+            <button type="button" id="upload-btn" class="upload-btn">Upload</button>
+        </form>
+        
+        <a href="/" class="back-button">Back to Home</a>
+
+        <div class="instructions">
+            <h2>How to Upload Your Resume</h2>
+            <ul>
+                <li>Enter the job title you are applying for just with out spacing by underscore.</li>
+                <li>Click the "Choose File" button to select your resume file.</li>
+                <li>Ensure your resume is in PDF, JPG, or JPEG format.</li>
+                <li>Click the "Upload" button to complete the process.</li>
+            </ul>
+        </div>
+
+        <!-- Score display -->
+        <div id="score-display"></div>
+        <div id="matched-skills"></div>
+        <div id="unmatched-skills"></div>
+
+        <!-- Chart container -->
+        <div id="chart-container">
+            <canvas id="myChart"></canvas>
+        </div>
+
+<!-- Star rating section -->
+<h2>Rate Your Experience</h2>
+<div class="stars">
+    <span class="star" data-value="1">&#9733;</span>
+    <span class="star" data-value="2">&#9733;</span>
+    <span class="star" data-value="3">&#9733;</span>
+    <span class="star" data-value="4">&#9733;</span>
+    <span class="star" data-value="5">&#9733;</span>
+</div>
+<div id="rating-message"></div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // Initialize chart with 0% for both matched and missing skills
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var chart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Matched Skills', 'Missing Skills'],
+                datasets: [{
+                    data: [0, 100], // Start with 0% matched skills and 100% missing skills
+                    backgroundColor: ['#28a745', '#dc3545']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        document.getElementById('upload-btn').addEventListener('click', function(event) {
+            const fileInput = document.getElementById('resume-upload');
+            const jobTitleInput = document.getElementById('job-title');
+            const uploadBtn = document.getElementById('upload-btn');
+
+            // Check if file is selected and job title is provided
+            if (fileInput.files.length === 0 || jobTitleInput.value.trim() === '') {
+                uploadBtn.classList.add('warning');
+                uploadBtn.textContent = 'Please provide job title and select a file';
+                setTimeout(() => {
+                    uploadBtn.classList.remove('warning');
+                    uploadBtn.textContent = 'Upload';
+                }, 3000);
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('resume', fileInput.files[0]);
+            formData.append('job', jobTitleInput.value.trim());
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.score !== undefined) {
+                    document.getElementById('score-display').textContent = `ATS Score: ${data.score.toFixed(2)}%`;
+
+                    // Update matched and unmatched skills
+                    document.getElementById('matched-skills').textContent = `Matched Skills: ${data.matched_skills.join(', ')}`;
+                    document.getElementById('unmatched-skills').textContent = `Unmatched Skills: ${data.unmatched_skills.join(', ')}`;
+
+                    // Update chart data
+                    chart.data.datasets[0].data = [data.score, 100 - data.score]; // Update with the new score
+                    chart.update(); // Ensure chart is re-rendered with updated data
+
+                    // Scroll to top of the page
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth' // Smooth scroll to the top
+                    });
+                } else {
+                    alert(`Error: ${data.error}`);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while uploading the file.');
+            });
+        });
+
+        // Star rating functionality
+        const stars = document.querySelectorAll('.star');
+        let rating = 0;
+
+        stars.forEach(star => {
+            star.addEventListener('click', () => {
+                rating = star.getAttribute('data-value');
+                document.getElementById('rating-message').textContent = `You rated this ${rating} star${rating > 1 ? 's' : ''}`;
+                
+                // Remove 'selected' class from all stars
+                stars.forEach(s => s.classList.remove('selected'));
+
+                // Add 'selected' class to the clicked star and all previous stars
+                star.classList.add('selected');
+                let previousStar = star.previousElementSibling;
+                while (previousStar) {
+                    previousStar.classList.add('selected');
+                    previousStar = previousStar.previousElementSibling;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
